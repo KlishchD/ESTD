@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\dependencies\nlohmann\json.hpp"
+#include "nlohmann\json.hpp"
 #include "strings.h"
 #include "files.h"
 
