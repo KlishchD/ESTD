@@ -84,6 +84,9 @@ namespace estd
     }
   };
 
+  using stack_string_64 = stack_string<64>;
+  using stack_string_128 = stack_string<128>;
+  using stack_string_256 = stack_string<256>;
   using stack_string_512 = stack_string<512>;
   using stack_string_1024 = stack_string<1024>;
   using stack_string_2048 = stack_string<2048>;
@@ -114,23 +117,26 @@ namespace estd
   }
 
   template<typename path_string_type>
-  void append_filename(const char* filename, path_string_type& path)
+  void append_filename(const char* source_path, path_string_type& destination)
   {
 #pragma message("Platform dependent code.")
+    if (!source_path) return;
 
-    if (!filename) return;
+    const char* filename_start = source_path;
+    const char* current_marker = source_path;
 
-    std::size_t size = strnlen(filename, 512);
-
-    std::size_t filename_begin_index = size - 1;
-    while (filename_begin_index > 0 && filename[filename_begin_index] != '\\')
+    while (current_marker[0] != '\0')
     {
-      --filename_begin_index;
+      const bool is_new_name = current_marker[0] == '\\' && current_marker[1] != '\0';
+      if (is_new_name) filename_start = current_marker;
+      ++current_marker;
     }
 
-    for (std::size_t index = filename_begin_index; index < size && filename[index] != '.'; ++index)
+    current_marker = filename_start;
+    while (current_marker[0] != '\0' && current_marker[0] != '.')
     {
-      path.push_back(filename[index]);
+      destination.push_back(current_marker[0]);
+      ++current_marker;
     }
   }
 
