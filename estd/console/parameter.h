@@ -67,8 +67,14 @@ namespace estd
       using inherited = base_parameter<path_parameter>;
       using return_type = inherited::return_type;
 
-      using path_type = stack_string_512;
+      using path_type = path_string;
       using value_type = path_type;
+
+      path_parameter(const char* name, estd::path* destination)
+        : inherited(name), path(&(destination->get())), directory_test(false), file_test(false)
+      {
+        assert_condition(path, "Provided parameter destination didn't exist");
+      }
 
       path_parameter(const char* name, path_type* destination)
         : inherited(name), path(destination), directory_test(false), file_test(false)

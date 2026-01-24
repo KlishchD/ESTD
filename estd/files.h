@@ -1,5 +1,6 @@
 #pragma once
 
+#include "path.h"
 #include <fstream>
 
 namespace estd
@@ -78,5 +79,24 @@ namespace estd
 
     (*out_buffer) = buffer;
     out_file_size = file_size;
+  }
+
+  template <typename string_type>
+  void append_file_data(const path& filepath, string_type& destination)
+  {
+    std::ifstream file(filepath.c_str(), std::ios_base::in);
+
+    std::string line;
+    while (std::getline(file, line))
+    {
+      destination.append(line);
+    }
+  }
+
+  template <typename string_type>
+  void dump_to_file(const path& filepath, const string_type& data)
+  {
+    std::ofstream file(filepath.c_str(), std::ios_base::out);
+    file << data.c_str();
   }
 }

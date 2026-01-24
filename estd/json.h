@@ -22,7 +22,9 @@ namespace estd
     return input[index].get_ptr<const value_type*>();
   }
 
-  json read_json(const stack_string_512& path);
+  json read_json(const path_string& path);
+  json read_json(const path& path);
 
-  void write_json(const stack_string_512& path, const json& object);
+  void write_json(const path_string& path, const json& object);
+  void write_json(const path& path, const json& object);
 }

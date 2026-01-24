@@ -5,7 +5,7 @@
 namespace estd
 {
   template <typename... args_types>
-  inline void log(const std::format_string<args_types...>& format, args_types... args);
+  inline void log(const std::format_string<args_types...>& format, args_types&&... args);
   inline void log(const char* string);
 
   // Small note from me to me) due to exploration of std::format.
@@ -13,14 +13,14 @@ namespace estd
   // Which means function has to receive format_string that will be constructed at compile time
   // rather than here during runtime.
   template <typename error_type, typename... args_types>
-  inline void throw_error(const std::format_string<args_types...> format, args_types... args)
+  inline void throw_error(const std::format_string<args_types...> format, args_types&&... args)
   {
     estd::log(format, std::forward<args_types>(args)...);
     throw error_type(std::vformat(format.get(), std::make_format_args(args...)));
   }
 
   template <typename object_type, typename function_type, typename... args_types>
-  inline void try_or_log_on_fail(object_type* object, function_type function, args_types... args)
+  inline void try_or_log_on_fail(object_type* object, function_type function, args_types&&... args)
   {
     try
     {
@@ -34,7 +34,7 @@ namespace estd
   }
 
   template <typename... args_types>
-  inline void assert_condition(bool condition, const std::format_string<args_types...>& format, args_types... args)
+  inline void assert_condition(bool condition, const std::format_string<args_types...>& format, args_types&&... args)
   {
     constexpr bool assertions_enabled = true;
     if constexpr (assertions_enabled)
@@ -61,7 +61,7 @@ namespace estd
   }
 
   template <typename... args_types>
-  inline void no_default(const std::format_string<args_types...> format, args_types... args)
+  inline void no_default(const std::format_string<args_types...> format, args_types&&... args)
   {
     throw_error<std::logic_error>(format, std::forward<args_types>(args)...);
   }

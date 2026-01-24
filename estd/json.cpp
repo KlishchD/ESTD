@@ -1,7 +1,7 @@
 #include "json.h"
 #include "logging.h"
 
-estd::json estd::read_json(const stack_string_512& path)
+estd::json estd::read_json(const estd::path_string& path)
 {
   char* buffer = nullptr;
   uint32_t buffer_size = 0;
@@ -14,8 +14,19 @@ estd::json estd::read_json(const stack_string_512& path)
   return object;
 }
 
-void estd::write_json(const stack_string_512& path, const estd::json& object)
+estd::json estd::read_json(const estd::path& path)
+{
+  if (!path.exists()) return {};
+  return read_json(path.get());
+}
+
+void estd::write_json(const estd::path_string& path, const estd::json& object)
 {
   std::ofstream file(path.c_str());
   file << object.dump(2);
+}
+
+void estd::write_json(const estd::path& path, const estd::json& object)
+{
+  return write_json(path.get(), object);
 }

@@ -36,51 +36,64 @@ namespace estd
   template<std::size_t capacity>
   class stack_string : public std::basic_string<char, std::char_traits<char>, estd::stack_allocator<char, capacity>>
   {
-    using super = std::basic_string<char, std::char_traits<char>, estd::stack_allocator<char, capacity>>;
+    using inherited = std::basic_string<char, std::char_traits<char>, estd::stack_allocator<char, capacity>>;
   public:
+    static constexpr bool is_stack_string = true;
+
     static inline constexpr std::size_t get_static_capacity()
     {
       return capacity;
     }
 
-    stack_string() : super()
+    stack_string() : inherited()
     {
       constexpr std::size_t small_string_capacity = 16;
-      super::reserve(capacity - small_string_capacity);
+      inherited::reserve(capacity - small_string_capacity);
     }
 
     stack_string(const char* begin, const char* end) : stack_string()
     {
-      super::append(begin, end);
+      inherited::append(begin, end);
     }
 
     stack_string(const char* intial_value) : stack_string()
     {
-      super::append(intial_value);
+      inherited::append(intial_value);
     }
 
     stack_string(const stack_string& other) : stack_string()
     {
-      super::append(other.c_str());
+      inherited::append(other.c_str());
     }
 
     stack_string(stack_string&& other) : stack_string()
     {
-      super::append(other.c_str());
+      inherited::append(other.c_str());
     }
 
     stack_string& operator=(const stack_string& other)
     {
-      super::clear();
-      super::append(other.c_str());
+      inherited::clear();
+      inherited::append(other.c_str());
       return *this;
     }
 
     stack_string& operator=(stack_string&& other)
     {
-      super::clear();
-      super::append(other.c_str());
+      inherited::clear();
+      inherited::append(other.c_str());
       return *this;
+    }
+
+    void append(const char* value)
+    {
+      inherited::append(value);
+    }
+
+    template <typename type> requires(std::is_class_v<type>)
+    void append(const type& other)
+    {
+      inherited::append(other.c_str());
     }
   };
 
@@ -94,6 +107,31 @@ namespace estd
   using stack_string_8192 = stack_string<8192>;
   using stack_string_16384 = stack_string<16384>;
   using stack_string_32768 = stack_string<32768>;
+
+  template <typename string_type> requires(string_type::is_stack_string)
+  class std::formatter<string_type>
+  {
+  public:
+    constexpr auto parse(const std::format_parse_context& context)
+    {
+      //assert(context.begin() == context.end() || *context.begin() == '}', "Failed to parse path format.");
+      return context.begin();
+    }
+
+    template <typename format_context>
+    auto format(const string_type& value, format_context& context) const
+    {
+      auto it = context.out();
+
+      for (char c : value)
+      {
+        (*it) = c;
+        ++it;
+      }
+
+      return it;
+    }
+  };
 
   template<typename string_type>
   void remove_file_extension(string_type& path)

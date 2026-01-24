@@ -18,7 +18,7 @@ namespace estd
 
     using difference_type = ptrdiff_t;
 
-    explicit buffer_insert_iterator(value_type* store, std::size_t size) : store(store), size(size)
+    explicit constexpr buffer_insert_iterator(value_type* store, std::size_t size) : store(store), size(size)
     { }
 
     buffer_insert_iterator& operator=(const value_type& value)
@@ -66,7 +66,7 @@ namespace estd
   }
 
   template <typename... args_types>
-  inline void log(const std::format_string<args_types...>& format, args_types... args)
+  inline void log(const std::format_string<args_types...>& format, args_types&&... args)
   {
     static std::mutex lock;
     std::lock_guard _(lock);
