@@ -24,7 +24,7 @@ namespace estd
       void set_help(const char* value) { help = value; }
 
       bool is_mandatory() const { return mandatory; }
-      void set_madatory(bool status) { mandatory = status; }
+      void set_mandatory(bool status) { mandatory = status; }
 
       virtual ~parameter() = default;
     protected:
@@ -43,7 +43,7 @@ namespace estd
       { }
 
       return_type& set_help(const char* value) { parameter::set_help(value); return *reinterpret_cast<return_type*>(this); }
-      return_type& set_mandatory(bool status) { parameter::set_madatory(status); return *reinterpret_cast<return_type*>(this); }
+      return_type& set_mandatory(bool status) { parameter::set_mandatory(status); return *reinterpret_cast<return_type*>(this); }
     };
 
     template <typename parent_type>
