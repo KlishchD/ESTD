@@ -157,17 +157,17 @@ namespace estd
 
       virtual bool process(const char* data) override
       {
-        if (!data) { log("No data provided to parameter integral parameter [{}].", name); return false; }
+        if (!data) { log("No data provided to parameter integral parameter [{}].", inherited::name); return false; }
 
         constexpr const char* format = std::is_unsigned_v<value_type> ? "%llu" : "lld";
 
         store_type store;
         int32_t parsed = std::sscanf(data, format, &store);
 
-        if (parsed != 1) { log("Failed to parse value [{}] for integral parameter [{}].", data, name); return false; }
+        if (parsed != 1) { log("Failed to parse value [{}] for integral parameter [{}].", data, inherited::name); return false; }
 
         bool is_in_range = min <= store && store <= max;
-        if (!is_in_range) { log("Integral parameter [{}] failed range test [{}] - [{}-{}].", name, store, min, max); return false; }
+        if (!is_in_range) { log("Integral parameter [{}] failed range test [{}] - [{}-{}].", inherited::name, store, min, max); return false; }
 
         (*value) = store;
 
@@ -217,15 +217,15 @@ namespace estd
 
       virtual bool process(const char* data) override
       {
-        if (!data) { log("No data provided to parameter floating point parameter [{}].", name); return false; }
+        if (!data) { log("No data provided to parameter floating point parameter [{}].", inherited::name); return false; }
 
         double store;
 
         int32_t parsed = std::sscanf(data, "%lf", &store);
-        if (parsed != 1) { log("Failed to parse value [{}] for floating point parameter [{}].", data, name); return false; }
+        if (parsed != 1) { log("Failed to parse value [{}] for floating point parameter [{}].", data, inherited::name); return false; }
 
         bool is_in_range = min <= store && store <= max;
-        if (!is_in_range) { log("Floating point parameter [{}] failed range test [{}] - [{}-{}].", name, store, min, max); return false; }
+        if (!is_in_range) { log("Floating point parameter [{}] failed range test [{}] - [{}-{}].", inherited::name, store, min, max); return false; }
 
         (*value) = store;
 
@@ -278,13 +278,13 @@ namespace estd
       {
         if (!data) { log("No data provided to parameter bool parameter [{}].", name); return false; }
 
-        constexpr char* incorrect_format = "Failed to parser value [{}] for bool parameter [{}], acceptable values are [0, 1, on, off, true, false].";
+        constexpr const char* incorrect_format = "Failed to parser value [{}] for bool parameter [{}], acceptable values are [0, 1, on, off, true, false].";
 
         const std::size_t size = std::strlen(data);
         if (size == 1)
         {
           bool is_on = data[0] == '1';
-          bool is_off = data[1] == '0';
+          bool is_off = data[0] == '0';
 
           const bool incorrect = !is_on && !is_off;
           if (incorrect) { log(incorrect_format, data, name); return false; }
