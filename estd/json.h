@@ -22,6 +22,18 @@ namespace estd
     return input[index].get_ptr<const value_type*>();
   }
 
+  inline const char* fetch_c_str(const json& input, const char* value_name)
+  {
+    const std::string* value = fetch_value<std::string>(input, value_name);
+    return value ? value->c_str() : nullptr;
+  }
+
+  inline const char* fetch_c_str(const json& input, std::size_t index)
+  {
+    const std::string* value = fetch_value<std::string>(input, index);
+    return value ? value->c_str() : nullptr;
+  }
+
   json read_json(const path_string& path);
   json read_json(const path& path);
 
