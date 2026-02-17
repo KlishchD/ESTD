@@ -344,6 +344,16 @@ namespace estd
     {
       return std::filesystem::last_write_time(store.c_str());
     }
+
+    std::filesystem::recursive_directory_iterator iterate_recursively() const
+    {
+      return std::filesystem::recursive_directory_iterator(store.c_str());
+    }
+
+    std::filesystem::directory_iterator iterate() const
+    {
+      return std::filesystem::directory_iterator(store.c_str());
+    }
   protected:
     path_string store;
   };
