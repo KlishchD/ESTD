@@ -6,7 +6,7 @@ namespace estd
 {
   namespace console
   {
-    using parameters_list = std::vector<parameter*>;
+    using parameters_list = std::map<parameter::name_type, parameter*>;
 
     class console
     {
@@ -15,40 +15,64 @@ namespace estd
       template <typename parameter_type>
       parameter_type& add_parameter(const char* name)
       {
-        parameter_type* result = new parameter_type(name);
-        parameters.push_back(result);
-        return *result;
-      }
+        assert_condition(!parameters.count(name), "Parameter with the same name [{}] was already added.", name);
 
-      const parameters_list& get_parameters() const { return parameters; }
+        auto* parameter = new parameter_type(name);
+        parameters[name] = parameter;
+        return *parameter;
+      }
 
       template <typename parameter_type, typename... arguments_types>
       parameter_type& add_parameter(const char* name, arguments_types... arguments)
       {
-        parameter_type* result = new parameter_type(name, std::forward<arguments_types>(arguments)...);
-        parameters.push_back(result);
-        return *result;
+        assert_condition(!parameters.count(name), "Parameter with the same name [{}] was already added.", name);
+
+        auto* parameter = new parameter_type(name, std::forward<arguments_types>(arguments)...);
+        parameters[name] = parameter;
+        return *parameter;
       }
+
+      const parameters_list& get_parameters() const { return parameters; }
 
       void parse(int32_t count, const char** arguments)
       {
 #pragma message("Can use hash map if becomes too expensive.")
         for (uint32_t index{ 0 }; index + 1 < count; ++index)
         {
-          for (auto* parameter : parameters)
+          const char* name = arguments[index];
+          const char* value = arguments[index + 1];
+
+          auto parameter_iterator = parameters.find(name);
+          if (parameter_iterator != parameters.end())
           {
-            if (parameter->get_name() == arguments[index])
-            {
-              parameter->process(arguments[index + 1]);
-              break;
-            }
+            auto* parameter = parameter_iterator->second;
+            parameter->process(value);
           }
+        }
+      }
+
+      void parse(int32_t count, const char** arguments, const char* parameter_name)
+      {
+        uint32_t argument_index = 0;
+        while (argument_index < count && std::strcmp(arguments[argument_index], parameter_name))
+        {
+          ++argument_index;
+        }
+
+        const bool argument_was_not_provided = argument_index >= count;
+        if (argument_was_not_provided) return;
+
+        auto parameter_iterator = parameters.find(parameter_name);
+        if (parameter_iterator != parameters.end())
+        {
+          auto* parameter = parameter_iterator->second;
+          parameter->process(arguments[argument_index + 1]);
         }
       }
 
       void verify_mandatory() const
       {
-        for (const auto* parameter : parameters)
+        for (const auto& [parameter_name, parameter] : parameters)
         {
           if (parameter->is_mandatory() && !parameter->was_processed())
           {
@@ -57,9 +81,35 @@ namespace estd
         }
       }
 
+      bool insert(const char* name, const estd::json& object)
+      {
+        for (auto& [parameter_name, parameter] : parameters)
+        {
+          if (parameter_name == name)
+          {
+            return parameter->insert(object);
+          }
+        }
+
+        return false;
+      }
+
+      bool extract(const char* name, estd::json& object) const
+      {
+        for (const auto& [parameter_name, parameter] : parameters)
+        {
+          if (parameter_name == name)
+          {
+            return parameter->extract(object);
+          }
+        }
+
+        return false;
+      }
+
       virtual ~console()
       {
-        for (auto& parameter : parameters)
+        for (auto& [_, parameter] : parameters)
         {
           delete parameter;
           parameter = nullptr;
