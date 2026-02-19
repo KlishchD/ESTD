@@ -71,6 +71,13 @@ namespace estd
       inherited::append(other.c_str());
     }
 
+    stack_string& operator=(const char* other)
+    {
+      inherited::clear();
+      inherited::append(other);
+      return *this;
+    }
+
     stack_string& operator=(const stack_string& other)
     {
       inherited::clear();
