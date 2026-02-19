@@ -354,6 +354,19 @@ namespace estd
     {
       return std::filesystem::directory_iterator(store.c_str());
     }
+
+    std::error_code to_absolute()
+    {
+      std::error_code error;
+      std::filesystem::path result = std::filesystem::absolute(store.c_str(), error);
+
+      if (!error)
+      {
+        store = result.string().c_str();
+      }
+
+      return error;
+    }
   protected:
     path_string store;
   };
