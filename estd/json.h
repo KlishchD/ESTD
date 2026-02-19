@@ -34,6 +34,12 @@ namespace estd
     return value ? value->c_str() : nullptr;
   }
 
+  inline const char* fetch_c_str(const json& input)
+  {
+    const std::string* value = input.get_ptr<const std::string*>();
+    return value ? value->c_str() : nullptr;
+  }
+
   json read_json(const path_string& path);
   json read_json(const path& path);
 
