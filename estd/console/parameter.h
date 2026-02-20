@@ -121,14 +121,14 @@ namespace estd
 
       return_type& set_directory(bool test)
       {
-        assert_condition(file_test ^ test, "Can not test paramter [{}] for file and directory at the time.", inherited::name);
+        assert_condition(!(file_test && test), "Can not test paramter [{}] for file and directory at the time.", inherited::name);
         directory_test = test;
         return *reinterpret_cast<return_type*>(this);
       }
 
       return_type& set_file(bool test)
       {
-        assert_condition(directory_test ^ test, "Can not test paramter [{}] for file and directory at the time.", inherited::name);
+        assert_condition(!(directory_test && test), "Can not test paramter [{}] for file and directory at the time.", inherited::name);
         file_test = test;
         return *reinterpret_cast<return_type*>(this);
       }
