@@ -180,8 +180,6 @@ namespace estd
       bool file_test;
     };
 
-    using inline_path_parmeter = inline_parameter<path_parameter>;
-
     template <typename value_type> requires(std::is_integral_v<value_type>)
     class integral_parameter : public base_parameter<integral_parameter<value_type>>
     {
@@ -324,7 +322,6 @@ namespace estd
       bool processed;
     };
 
-
     template <typename value_type> requires(std::is_floating_point_v<value_type>)
     class floating_point_parameter : public base_parameter<floating_point_parameter<value_type>>
     {
@@ -439,18 +436,6 @@ namespace estd
 
       bool processed;
     };
-
-    using unsigned_integer_parameter = integral_parameter<uint32_t>;
-    using integer_parameter = integral_parameter<int32_t>;
-
-    using float_parameter = floating_point_parameter<float>;
-    using double_parameter = floating_point_parameter<double>;
-
-    using inline_unsigned_integer_parameter = inline_parameter<integral_parameter<uint32_t>>;
-    using inline_integer_parameter = inline_parameter<integral_parameter<int32_t>>;
-
-    using inline_float_parameter = inline_parameter<floating_point_parameter<float>>;
-    using inline_double_parameter = inline_parameter<floating_point_parameter<double>>;
 
     class bool_parameter : public base_parameter<bool_parameter>
     {
@@ -649,5 +634,18 @@ namespace estd
       char* value;
       bool processed;
     };
-  };
-};
+
+    using unsigned_integer_parameter = integral_parameter<uint32_t>;
+    using integer_parameter = integral_parameter<int32_t>;
+    using float_parameter = floating_point_parameter<float>;
+    using double_parameter = floating_point_parameter<double>;
+
+    using inline_path_parameter = inline_parameter<path_parameter>;
+    using inline_unsigned_integer_parameter = inline_parameter<integral_parameter<uint32_t>>;
+    using inline_integer_parameter = inline_parameter<integral_parameter<int32_t>>;
+    using inline_float_parameter = inline_parameter<floating_point_parameter<float>>;
+    using inline_double_parameter = inline_parameter<floating_point_parameter<double>>;
+    using inline_bool_parameter = inline_parameter<bool_parameter>;
+    using inline_marker_parameter = inline_parameter<marker_parameter>;
+  }
+}
