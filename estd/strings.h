@@ -29,7 +29,7 @@ namespace estd
       assert_condition(capacity == size, "Expected size to be equal to capacity for static string allocation. [{}!={}]", capacity, size);
     }
   protected:
-    value_type data[capacity];
+    value_type data[capacity]{};
   };
 
 #pragma message("Need to improve (make work) capacity/size limit reached messages.")
@@ -73,22 +73,34 @@ namespace estd
 
     stack_string& operator=(const char* other)
     {
-      inherited::clear();
-      inherited::append(other);
+      if (data() != other)
+      {
+        inherited::clear();
+        inherited::append(other);
+      }
+
       return *this;
     }
 
     stack_string& operator=(const stack_string& other)
     {
-      inherited::clear();
-      inherited::append(other.c_str());
+      if (data() != other.data())
+      {
+        inherited::clear();
+        inherited::append(other.c_str());
+      }
+
       return *this;
     }
 
     stack_string& operator=(stack_string&& other)
     {
-      inherited::clear();
-      inherited::append(other.c_str());
+      if (data() != other.data())
+      {
+        inherited::clear();
+        inherited::append(other.c_str());
+      }
+
       return *this;
     }
 
