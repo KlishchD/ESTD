@@ -60,7 +60,7 @@ namespace estd
 
       inline_parameter(const char* name, const value_type& default_value) : parent_type(name, &value)
       {
-        value = default_value;
+        inherited::set_value(default_value);
       }
     protected:
       value_type value;
@@ -106,12 +106,7 @@ namespace estd
       {
         if (!data) { log("No data provided to parameter path parameter [{}].", inherited::name); return false; }
 
-        estd::path provided_path = data;
-
-        std::error_code error = provided_path.to_absolute();
-        if (error) { log("Provieded string is not an actual path [{}].", data); return false; }
-
-        return set_value(provided_path);
+        return set_value(estd::path(data));
       }
 
       virtual bool was_processed() const override
@@ -133,13 +128,24 @@ namespace estd
         return *reinterpret_cast<return_type*>(this);
       }
 
+      return_type& set_exists(bool test)
+      {
+        existance_test = test;
+        return *reinterpret_cast<return_type*>(this);
+      }
+
       bool set_value(const value_type& desired_path)
       {
         return set_value(estd::path(desired_path));
       }
 
-      bool set_value(const estd::path& desired_path)
+      bool set_value(const estd::path& raw_desired_path)
       {
+        estd::path desired_path = raw_desired_path;
+
+        std::error_code error = desired_path.to_absolute();
+        if (error) { log("Provieded string is not an actual path [{}].", desired_path); return false; }
+
         if (desired_path.exists())
         {
           if (directory_test)
@@ -153,6 +159,11 @@ namespace estd
             const bool file = desired_path.is_file();
             if (!file) { log("Parameter [{}] failed file check [{}].", inherited::name, desired_path); return false; }
           }
+        }
+        else if (existance_test)
+        {
+          log("Parameter [{}] failed existance check.", inherited::name);
+          return false;
         }
 
         (*path) = desired_path.get();
@@ -178,6 +189,7 @@ namespace estd
       value_type* path;
       bool directory_test;
       bool file_test;
+      bool existance_test;
     };
 
     template <typename value_type> requires(std::is_integral_v<value_type>)
