@@ -56,6 +56,11 @@ namespace estd
       return *this;
     }
 
+    bool operator==(const path_string& other) const
+    {
+      return store == other;
+    }
+
     bool operator==(const path& other) const
     {
       return store == other.store;
@@ -64,6 +69,11 @@ namespace estd
     bool operator==(const char* other) const
     {
       return store == other;
+    }
+
+    bool operator!=(const path_string& other) const
+    {
+      return store != other;
     }
 
     bool operator!=(const path& other) const
@@ -76,6 +86,11 @@ namespace estd
       return store != other;
     }
 
+    bool operator<(const path_string& other) const
+    {
+      return store < other;
+    }
+
     bool operator<(const path& other) const
     {
       return store < other.store;
@@ -84,6 +99,11 @@ namespace estd
     bool operator>(const path& other) const
     {
       return store > other.store;
+    }
+
+    bool operator>(const path_string& other) const
+    {
+      return store > other;
     }
 
 #pragma message("Platform dependent code.")
