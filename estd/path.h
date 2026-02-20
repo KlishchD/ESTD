@@ -21,11 +21,11 @@ namespace estd
     path(const char* value) : store(value)
     { }
 
-    explicit path(const path& other) : store(other.store)
+    path(const path& other) : store(other.store)
     { }
 
     template <typename string_type> requires(std::is_class_v<string_type>)
-    explicit path(const string_type& other) : store(other.c_str())
+    path(const string_type& other) : store(other.c_str())
     { }
 
     path(path&& other) : store(std::move(other.store))
