@@ -387,6 +387,18 @@ namespace estd
 
       return error;
     }
+
+    bool set_base(const estd::path& base)
+    {
+      if (is_relative() && base.is_absolute())
+      {
+        std::filesystem::path combined = std::filesystem::path(base.c_str()) / std::filesystem::path(store.c_str());
+        store = combined.string().c_str();
+        return true;
+      }
+
+      return false;
+    }
   protected:
     path_string store;
   };
