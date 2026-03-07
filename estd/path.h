@@ -153,11 +153,16 @@ namespace estd
       return *this;
     }
 
-    path& replace_extension(const char* extension)
+    path& remove_extension()
     {
       std::size_t extension_index = get_extension_start_index();
       while (extension_index < store.size()) store.pop_back();
+      return *this;
+    }
 
+    path& replace_extension(const char* extension)
+    {
+      remove_extension();
       store.append(extension);
       return *this;
     }
@@ -298,6 +303,12 @@ namespace estd
       }
 
       return index < store.size() && store[index] == '.' ? index : std::size_t(-1);
+    }
+
+    bool has_extension(const char* other) const
+    {
+      extension_string extension = get_extension();
+      return extension == other;
     }
 
     bool has_extension() const
