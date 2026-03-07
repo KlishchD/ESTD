@@ -34,6 +34,13 @@ namespace estd
 
       const parameters_list& get_parameters() const { return parameters; }
 
+      template <typename parameter_type>
+      parameter_type* find(const char* name) const
+      {
+        auto it = parameters.find(name);
+        return it == parameters.end() ? nullptr : reinterpret_cast<parameter_type*>(it->second);
+      }
+
       void parse(int32_t count, const char** arguments)
       {
 #pragma message("Can use hash map if becomes too expensive.")
