@@ -73,7 +73,7 @@ namespace estd
 
     stack_string& operator=(const char* other)
     {
-      if (data() != other)
+      if (inherited::data() != other)
       {
         inherited::clear();
         inherited::append(other);
@@ -84,7 +84,7 @@ namespace estd
 
     stack_string& operator=(const stack_string& other)
     {
-      if (data() != other.data())
+      if (inherited::data() != other.data())
       {
         inherited::clear();
         inherited::append(other.c_str());
@@ -95,7 +95,7 @@ namespace estd
 
     stack_string& operator=(stack_string&& other)
     {
-      if (data() != other.data())
+      if (inherited::data() != other.data())
       {
         inherited::clear();
         inherited::append(other.c_str());
