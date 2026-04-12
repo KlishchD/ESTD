@@ -109,6 +109,11 @@ namespace estd
       inherited::append(value);
     }
 
+    void append(const char* value, std::size_t size)
+    {
+      inherited::append(value, size);
+    }
+
     template <typename type> requires(std::is_class_v<type>)
     void append(const type& other)
     {
