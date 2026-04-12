@@ -386,15 +386,22 @@ namespace estd
       return std::filesystem::directory_iterator(store.c_str());
     }
 
+    std::error_code to_relative(const estd::path& base)
+    {
+      std::error_code error;
+      std::filesystem::path result = std::filesystem::relative(store.c_str(), base.c_str(), error);
+
+      if (!error) store = result.string().c_str();
+
+      return error;
+    }
+
     std::error_code to_absolute()
     {
       std::error_code error;
       std::filesystem::path result = std::filesystem::absolute(store.c_str(), error);
 
-      if (!error)
-      {
-        store = result.string().c_str();
-      }
+      if (!error) store = result.string().c_str();
 
       return error;
     }
@@ -409,6 +416,15 @@ namespace estd
       }
 
       return false;
+    }
+
+    estd::path relative(const estd::path& base) const
+    {
+      estd::path result = store;
+      const auto error = result.to_relative(base);
+      estd::assert_condition(!error, "Detected an error during an attempt to calculate relative path for [{}] with base [{}].",
+        result.c_str(), base.c_str());
+      return result;
     }
   protected:
     path_string store;
