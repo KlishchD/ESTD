@@ -56,9 +56,14 @@ namespace estd
       inherited::append(begin, end);
     }
 
-    stack_string(const char* intial_value) : stack_string()
+    stack_string(const char* initial_value) : stack_string()
     {
-      inherited::append(intial_value);
+      inherited::append(initial_value);
+    }
+
+    stack_string(const char* initial_value, std::size_t size) : stack_string()
+    {
+      inherited::append(initial_value, size);
     }
 
     stack_string(const stack_string& other) : stack_string()

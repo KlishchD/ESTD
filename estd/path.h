@@ -21,6 +21,9 @@ namespace estd
     path(const char* value) : store(value)
     { }
 
+    path(const char* value, std::size_t size) : store(value, size)
+    { }
+
     explicit path(const path& other) : store(other.store)
     { }
 
@@ -342,6 +345,7 @@ namespace estd
 
     file_time get_last_write_time() const
     {
+      if (!exists()) return std::filesystem::file_time_type(std::filesystem::file_time_type::duration(0));
       return std::filesystem::last_write_time(store.c_str());
     }
 
