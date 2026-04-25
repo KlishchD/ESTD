@@ -29,7 +29,7 @@ namespace estd
       assert_condition(capacity == size, "Expected size to be equal to capacity for static string allocation. [{}!={}]", capacity, size);
     }
   protected:
-    value_type data[capacity];
+    value_type data[capacity]{};
   };
 
 #pragma message("Need to improve (make work) capacity/size limit reached messages.")
@@ -76,23 +76,47 @@ namespace estd
       inherited::append(other.c_str());
     }
 
+    stack_string& operator=(const char* other)
+    {
+      if (inherited::data() != other)
+      {
+        inherited::clear();
+        inherited::append(other);
+      }
+
+      return *this;
+    }
+
     stack_string& operator=(const stack_string& other)
     {
-      inherited::clear();
-      inherited::append(other.c_str());
+      if (inherited::data() != other.data())
+      {
+        inherited::clear();
+        inherited::append(other.c_str());
+      }
+
       return *this;
     }
 
     stack_string& operator=(stack_string&& other)
     {
-      inherited::clear();
-      inherited::append(other.c_str());
+      if (inherited::data() != other.data())
+      {
+        inherited::clear();
+        inherited::append(other.c_str());
+      }
+
       return *this;
     }
 
     void append(const char* value)
     {
       inherited::append(value);
+    }
+
+    void append(const char* value, std::size_t size)
+    {
+      inherited::append(value, size);
     }
 
     template <typename type> requires(std::is_class_v<type>)

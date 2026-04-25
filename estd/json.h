@@ -40,6 +40,12 @@ namespace estd
     return value ? value->c_str() : nullptr;
   }
 
+  template <typename value_type>
+  inline value_type fetch_or_default(const json& input, const char* value_name, const value_type& default_value)
+  {
+    return input.contains(value_name) ? static_cast<value_type>(input[value_name]) : default_value;
+  }
+
   json read_json(const path_string& path);
   json read_json(const path& path);
 

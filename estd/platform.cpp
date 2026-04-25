@@ -11,3 +11,21 @@ std::string estd::fetch_executable_path()
 
   return executable_path;
 }
+
+uint64_t estd::fetch_sector_size()
+{
+  static uint64_t result = 0;
+
+  if (!result)
+  {
+    DWORD sectors_per_cluster;
+    DWORD sector_size;
+    DWORD free_clusters_count;
+    DWORD clusters_count;
+    GetDiskFreeSpaceA(nullptr, &sectors_per_cluster, &sector_size, &free_clusters_count, &clusters_count);
+
+    result = sector_size;
+  }
+
+  return result;
+}

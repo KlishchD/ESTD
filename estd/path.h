@@ -24,11 +24,11 @@ namespace estd
     path(const char* value, std::size_t size) : store(value, size)
     { }
 
-    explicit path(const path& other) : store(other.store)
+    path(const path& other) : store(other.store)
     { }
 
     template <typename string_type> requires(std::is_class_v<string_type>)
-    explicit path(const string_type& other) : store(other.c_str())
+    path(const string_type& other) : store(other.c_str())
     { }
 
     path(path&& other) : store(std::move(other.store))
@@ -59,6 +59,11 @@ namespace estd
       return *this;
     }
 
+    bool operator==(const path_string& other) const
+    {
+      return store == other;
+    }
+
     bool operator==(const path& other) const
     {
       return store == other.store;
@@ -67,6 +72,11 @@ namespace estd
     bool operator==(const char* other) const
     {
       return store == other;
+    }
+
+    bool operator!=(const path_string& other) const
+    {
+      return store != other;
     }
 
     bool operator!=(const path& other) const
@@ -79,6 +89,11 @@ namespace estd
       return store != other;
     }
 
+    bool operator<(const path_string& other) const
+    {
+      return store < other;
+    }
+
     bool operator<(const path& other) const
     {
       return store < other.store;
@@ -87,6 +102,11 @@ namespace estd
     bool operator>(const path& other) const
     {
       return store > other.store;
+    }
+
+    bool operator>(const path_string& other) const
+    {
+      return store > other;
     }
 
 #pragma message("Platform dependent code.")
@@ -136,11 +156,16 @@ namespace estd
       return *this;
     }
 
-    path& replace_extension(const char* extension)
+    path& remove_extension()
     {
       std::size_t extension_index = get_extension_start_index();
       while (extension_index < store.size()) store.pop_back();
+      return *this;
+    }
 
+    path& replace_extension(const char* extension)
+    {
+      remove_extension();
       store.append(extension);
       return *this;
     }
@@ -283,6 +308,12 @@ namespace estd
       return index < store.size() && store[index] == '.' ? index : std::size_t(-1);
     }
 
+    bool has_extension(const char* other) const
+    {
+      extension_string extension = get_extension();
+      return extension == other;
+    }
+
     bool has_extension() const
     {
       return get_extension_start_index() < store.size();
@@ -357,6 +388,47 @@ namespace estd
     std::filesystem::directory_iterator iterate() const
     {
       return std::filesystem::directory_iterator(store.c_str());
+    }
+
+    std::error_code to_relative(const estd::path& base)
+    {
+      std::error_code error;
+      std::filesystem::path result = std::filesystem::relative(store.c_str(), base.c_str(), error);
+
+      if (!error) store = result.string().c_str();
+
+      return error;
+    }
+
+    std::error_code to_absolute()
+    {
+      std::error_code error;
+      std::filesystem::path result = std::filesystem::absolute(store.c_str(), error);
+
+      if (!error) store = result.string().c_str();
+
+      return error;
+    }
+
+    bool set_base(const estd::path& base)
+    {
+      if (is_relative() && base.is_absolute())
+      {
+        std::filesystem::path combined = std::filesystem::path(base.c_str()) / std::filesystem::path(store.c_str());
+        store = combined.string().c_str();
+        return true;
+      }
+
+      return false;
+    }
+
+    estd::path relative(const estd::path& base) const
+    {
+      estd::path result = store;
+      const auto error = result.to_relative(base);
+      estd::assert_condition(!error, "Detected an error during an attempt to calculate relative path for [{}] with base [{}].",
+        result.c_str(), base.c_str());
+      return result;
     }
   protected:
     path_string store;
