@@ -1,0 +1,9 @@
+{
+  "Projects": [
+    {
+      "Name": "ESTD",
+      "Sources": [ "estd" ],
+      "Includes": [ "Dependencies\\json\\include" ]
+    }
+  ]
+}
